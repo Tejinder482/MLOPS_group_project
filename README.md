@@ -70,15 +70,18 @@ Only `id2label.json` is committed. Processed parquet files stay local.
 
 ### 2. Train on Kaggle
 
-1. Upload `notebooks/kaggle_train_v1.ipynb` and `kaggle_train_v2.ipynb` to Kaggle.
-2. Enable **GPU T4 x2** under Settings → Accelerator.
-3. Add Kaggle Secrets:
-   - `WANDB_API_KEY`
-   - `HF_TOKEN`
-4. Run both notebooks (one per experiment version).
-5. Push the best model to Hugging Face from the winning notebook.
-
-Replace `YOUR_USERNAME/imdb-distilbert-best` in the notebook with your HF repo name.
+1. Push the latest `develop` branch to GitHub (notebooks clone `Tejinder482/MLOPS_group_project`).
+2. On [Kaggle](https://www.kaggle.com/code), click **New Notebook → Import Notebook** and upload:
+   - `notebooks/kaggle_train_v1.ipynb` → save as **imdb-train-v1**
+   - `notebooks/kaggle_train_v2.ipynb` → save as **imdb-train-v2**
+3. In each notebook: **Settings → Accelerator → GPU T4 x2**.
+4. **Add-ons → Secrets** (account-level):
+   - `WANDB_API_KEY` — from https://wandb.ai/authorize
+   - `HF_TOKEN` — from https://huggingface.co/settings/tokens (read + write)
+5. Run all cells in **v1** first (~30–45 min), then run **v2**.
+6. Open the W&B project and compare `run-v1` vs `run-v2` (accuracy, F1, loss).
+7. In the winning notebook, run the optional **push to Hugging Face** cell (creates `tejinder482/imdb-distilbert-best`).
+8. Set both Kaggle notebooks to **Public** (Share) and paste URLs below.
 
 ### 3. Local training (optional smoke test)
 
@@ -91,7 +94,7 @@ python src/train.py --config configs/train_v1.yaml
 
 ```bash
 export HF_TOKEN=your_token
-export HF_MODEL_NAME=your-username/imdb-distilbert-best
+export HF_MODEL_NAME=tejinder482/imdb-distilbert-best
 export INPUT_TEXT="This movie was amazing!"
 python src/inference.py
 ```
@@ -99,10 +102,10 @@ python src/inference.py
 ### 5. Docker
 
 ```bash
-docker build --build-arg HF_MODEL_NAME=your-username/imdb-distilbert-best -t mlops-a3-inference:latest .
+docker build --build-arg HF_MODEL_NAME=tejinder482/imdb-distilbert-best -t mlops-a3-inference:latest .
 docker run --rm -e HF_TOKEN=<token> -e INPUT_TEXT="Great film!" mlops-a3-inference:latest
-docker tag mlops-a3-inference:latest your-dockerhub/mlops-a3-inference:latest
-docker push your-dockerhub/mlops-a3-inference:latest
+docker tag mlops-a3-inference:latest tejinder482/mlops-a3-inference:latest
+docker push tejinder482/mlops-a3-inference:latest
 ```
 
 ## GitHub configuration
@@ -123,23 +126,23 @@ docker push your-dockerhub/mlops-a3-inference:latest
 
 | Variable | Example | Purpose |
 |----------|---------|---------|
-| `HF_MODEL_NAME` | `your-username/imdb-distilbert-best` | Model used by inference workflow |
+| `HF_MODEL_NAME` | `tejinder482/imdb-distilbert-best` | Model used by inference workflow |
 
 ### Workflows
 
 - **CI** (`ci.yml`) — runs `flake8` on push to `develop` and PRs to `main`
 - **Inference** (`inference.yml`) — manual dispatch with review text input
 
-## Submission links (update before report)
+## Submission links (update after Kaggle runs)
 
 | Item | Link |
 |------|------|
-| GitHub Repository | `https://github.com/<org-or-user>/mlops-group-project` |
-| Kaggle Notebook v1 | `https://www.kaggle.com/code/<user>/imdb-train-v1` |
-| Kaggle Notebook v2 | `https://www.kaggle.com/code/<user>/imdb-train-v2` |
-| Hugging Face Model | `https://huggingface.co/<user>/imdb-distilbert-best` |
-| Docker Image | `https://hub.docker.com/r/<user>/mlops-a3-inference` |
-| W&B Dashboard | `https://wandb.ai/<user>/mlops-assignment3` |
+| GitHub Repository | https://github.com/Tejinder482/MLOPS_group_project |
+| Kaggle Notebook v1 | _paste public URL after upload_ |
+| Kaggle Notebook v2 | _paste public URL after upload_ |
+| Hugging Face Model | https://huggingface.co/tejinder482/imdb-distilbert-best |
+| Docker Image | _paste after Task 6_ |
+| W&B Dashboard | https://wandb.ai/tejinder482/mlops-assignment3 |
 
 ## Model selection rationale (for report)
 
